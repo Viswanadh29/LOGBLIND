@@ -29,7 +29,9 @@ class GapDetector:
         return results
 
     def _analyze_technique(
-        self, policy: PolicySnapshot, technique: Technique,
+        self,
+        policy: PolicySnapshot,
+        technique: Technique,
     ) -> TechniqueGapResult:
         """Analyze a single technique against the policy."""
         gaps: list[EventGap] = []
@@ -43,7 +45,8 @@ class GapDetector:
                 technique_name=technique.name,
                 coverage_percent=0.0,
                 status=CoverageStatus.BLIND,
-                total_requirements=0, met_requirements=0,
+                total_requirements=0,
+                met_requirements=0,
                 notes=["No detection requirements defined."],
             )
 
@@ -69,7 +72,9 @@ class GapDetector:
         else:
             sysmon_reqs = [r for r in technique.event_requirements if r.sysmon_required]
             if sysmon_reqs:
-                notes.append(f"[!] Sysmon not installed -- {len(sysmon_reqs)} detection(s) unavailable.")
+                notes.append(
+                    f"[!] Sysmon not installed -- {len(sysmon_reqs)} detection(s) unavailable."
+                )
 
         return TechniqueGapResult(
             technique_id=technique.technique_id,
@@ -78,11 +83,14 @@ class GapDetector:
             status=status,
             total_requirements=total_count,
             met_requirements=met_count,
-            gaps=gaps, notes=notes,
+            gaps=gaps,
+            notes=notes,
         )
 
     def _check_requirement(
-        self, policy: PolicySnapshot, req: EventRequirement,
+        self,
+        policy: PolicySnapshot,
+        req: EventRequirement,
     ) -> tuple[bool, EventGap | None]:
         """Check if a single event requirement is met."""
         # Sysmon-dependent events
@@ -90,8 +98,10 @@ class GapDetector:
             if policy.registry.sysmon_installed:
                 return True, None
             return False, EventGap(
-                event_id=req.event_id, channel=req.channel,
-                condition=req.condition, importance=req.importance,
+                event_id=req.event_id,
+                channel=req.channel,
+                condition=req.condition,
+                importance=req.importance,
                 reason="Sysmon is not installed.",
                 fix_command="# Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon",
             )
@@ -102,8 +112,10 @@ class GapDetector:
             if is_met:
                 return True, None
             return False, EventGap(
-                event_id=req.event_id, channel=req.channel,
-                condition=req.condition, importance=req.importance,
+                event_id=req.event_id,
+                channel=req.channel,
+                condition=req.condition,
+                importance=req.importance,
                 reason=f"Registry check '{req.registry_check}' is not configured.",
                 fix_command=f"# Configure: {req.registry_check}",
             )
@@ -128,11 +140,20 @@ class GapDetector:
                 missing.append("Failure")
                 fix_parts.append("/failure:enable")
 
+            missing_audits = " and ".join(missing)
+            fix_command = (
+                f'auditpol /set /subcategory:"{req.audit_subcategory}" {" ".join(fix_parts)}'
+            )
             return False, EventGap(
-                event_id=req.event_id, channel=req.channel,
-                condition=req.condition, importance=req.importance,
-                reason=f"Audit subcategory '{req.audit_subcategory}' not set to {' and '.join(missing)} auditing.",
-                fix_command=f'auditpol /set /subcategory:"{req.audit_subcategory}" {" ".join(fix_parts)}',
+                event_id=req.event_id,
+                channel=req.channel,
+                condition=req.condition,
+                importance=req.importance,
+                reason=(
+                    f"Audit subcategory '{req.audit_subcategory}' not set to"
+                    f" {missing_audits} auditing."
+                ),
+                fix_command=fix_command,
             )
 
         # Operational log events — typically always available
@@ -152,7 +173,9 @@ class GapDetector:
         return False
 
     def _calculate_weighted_coverage(
-        self, requirements: list[EventRequirement], gaps: list[EventGap],
+        self,
+        requirements: list[EventRequirement],
+        gaps: list[EventGap],
     ) -> float:
         """Calculate weighted coverage. CRITICAL=3x, HIGH=2x, MEDIUM=1x, LOW=0.5x."""
         weights = {"CRITICAL": 3.0, "HIGH": 2.0, "MEDIUM": 1.0, "LOW": 0.5}

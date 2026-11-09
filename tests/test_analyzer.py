@@ -1,7 +1,7 @@
 """Tests for LogBlind analysis engine."""
 
-from logblind.analyzer.gap_detector import GapDetector
 from logblind.analyzer.coverage_scorer import CoverageScorer
+from logblind.analyzer.gap_detector import GapDetector
 from logblind.models.analysis import CoverageStatus
 
 

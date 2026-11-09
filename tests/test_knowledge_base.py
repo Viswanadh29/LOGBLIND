@@ -2,8 +2,10 @@
 
 import re
 from pathlib import Path
+
 import pytest
-from logblind.knowledge_base.loader import KnowledgeBaseLoader, KnowledgeBaseError
+
+from logblind.knowledge_base.loader import KnowledgeBaseError, KnowledgeBaseLoader
 
 
 class TestKnowledgeBaseLoader:

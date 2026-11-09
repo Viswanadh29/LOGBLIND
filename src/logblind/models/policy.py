@@ -1,19 +1,21 @@
 """Data models representing Windows audit policy state."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
 
 
 class AuditSetting(Enum):
     """Possible states for an audit subcategory."""
+
     NO_AUDITING = "No Auditing"
     SUCCESS = "Success"
     FAILURE = "Failure"
     SUCCESS_AND_FAILURE = "Success and Failure"
 
     @classmethod
-    def from_string(cls, value: str) -> "AuditSetting":
+    def from_string(cls, value: str) -> AuditSetting:
         """Parse an audit setting from auditpol output string."""
         normalized = value.strip()
         for member in cls:
@@ -33,6 +35,7 @@ class AuditSetting(Enum):
 @dataclass
 class AuditSubcategory:
     """A single Windows Advanced Audit Policy subcategory."""
+
     name: str
     category: str
     setting: AuditSetting
@@ -42,6 +45,7 @@ class AuditSubcategory:
 @dataclass
 class RegistryCheck:
     """Result of a Windows registry check."""
+
     name: str
     path: str
     value_name: str
@@ -54,6 +58,7 @@ class RegistryCheck:
 @dataclass
 class RegistrySnapshot:
     """Collection of registry-based configuration checks."""
+
     checks: list[RegistryCheck] = field(default_factory=list)
     sysmon_installed: bool = False
     sysmon_version: str | None = None
@@ -65,6 +70,7 @@ class RegistrySnapshot:
 @dataclass
 class PolicySnapshot:
     """Complete snapshot of a Windows machine's audit configuration."""
+
     machine_name: str = ""
     subcategories: dict[str, AuditSubcategory] = field(default_factory=dict)
     registry: RegistrySnapshot = field(default_factory=RegistrySnapshot)

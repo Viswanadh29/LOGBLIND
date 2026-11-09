@@ -34,9 +34,14 @@ class JSONReporter:
                     "total_requirements": r.total_requirements,
                     "met_requirements": r.met_requirements,
                     "gaps": [
-                        {"event_id": g.event_id, "channel": g.channel,
-                         "condition": g.condition, "importance": g.importance,
-                         "reason": g.reason, "fix_command": g.fix_command}
+                        {
+                            "event_id": g.event_id,
+                            "channel": g.channel,
+                            "condition": g.condition,
+                            "importance": g.importance,
+                            "reason": g.reason,
+                            "fix_command": g.fix_command,
+                        }
                         for g in r.gaps
                     ],
                     "notes": r.notes,
@@ -44,9 +49,14 @@ class JSONReporter:
                 for r in gap_results
             ],
             "critical_gaps": [
-                {"event_id": g.event_id, "channel": g.channel,
-                 "condition": g.condition, "importance": g.importance,
-                 "reason": g.reason, "fix_command": g.fix_command}
+                {
+                    "event_id": g.event_id,
+                    "channel": g.channel,
+                    "condition": g.condition,
+                    "importance": g.importance,
+                    "reason": g.reason,
+                    "fix_command": g.fix_command,
+                }
                 for g in report.critical_gaps
             ],
         }

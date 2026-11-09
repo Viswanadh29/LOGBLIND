@@ -7,7 +7,10 @@ from pathlib import Path
 import yaml
 
 from logblind.models.technique import (
-    AdditionalCheck, EventRequirement, KnowledgeBase, Technique,
+    AdditionalCheck,
+    EventRequirement,
+    KnowledgeBase,
+    Technique,
 )
 
 
@@ -39,10 +42,10 @@ class KnowledgeBaseLoader:
     def _load_technique(self, yaml_path: Path) -> Technique:
         """Load a single technique YAML file."""
         try:
-            with open(yaml_path, "r", encoding="utf-8") as f:
+            with open(yaml_path, encoding="utf-8") as f:
                 data = yaml.safe_load(f)
         except yaml.YAMLError as e:
-            raise KnowledgeBaseError(f"Invalid YAML in {yaml_path.name}: {e}")
+            raise KnowledgeBaseError(f"Invalid YAML in {yaml_path.name}: {e}") from e
 
         if not data or "technique" not in data:
             raise KnowledgeBaseError(f"Missing 'technique' root key in {yaml_path.name}")

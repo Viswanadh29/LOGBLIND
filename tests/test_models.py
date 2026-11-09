@@ -1,9 +1,7 @@
 """Tests for LogBlind data models."""
 
-import pytest
-from logblind.models.policy import AuditSetting, PolicySnapshot
-from logblind.models.technique import KnowledgeBase
-from logblind.models.analysis import CoverageStatus, CoverageReport
+from logblind.models.analysis import CoverageReport, CoverageStatus
+from logblind.models.policy import AuditSetting
 
 
 class TestAuditSetting:

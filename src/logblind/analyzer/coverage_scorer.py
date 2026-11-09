@@ -12,8 +12,11 @@ class CoverageScorer:
         """Calculate the overall coverage report."""
         if not gap_results:
             return CoverageReport(
-                overall_score=0.0, total_techniques=0,
-                covered_count=0, partial_count=0, blind_count=0,
+                overall_score=0.0,
+                total_techniques=0,
+                covered_count=0,
+                partial_count=0,
+                blind_count=0,
             )
 
         covered = sum(1 for r in gap_results if r.status == CoverageStatus.COVERED)
@@ -35,7 +38,9 @@ class CoverageScorer:
         return CoverageReport(
             overall_score=overall_score,
             total_techniques=len(gap_results),
-            covered_count=covered, partial_count=partial, blind_count=blind,
+            covered_count=covered,
+            partial_count=partial,
+            blind_count=blind,
             technique_results=gap_results,
             critical_gaps=critical_gaps,
         )

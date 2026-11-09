@@ -1,8 +1,7 @@
 """The `logblind fix` command — generates PowerShell remediation scripts."""
 
 from pathlib import Path
-from typing import Optional
-from typing_extensions import Annotated
+from typing import Annotated
 
 import typer
 
@@ -13,10 +12,18 @@ app = typer.Typer(help="Generate PowerShell scripts to fix audit configuration g
 
 @app.callback(invoke_without_command=True)
 def fix(
-    file: Annotated[Optional[Path], typer.Option("--file", "-f", help="Exported audit policy CSV (offline mode).")] = None,
-    output: Annotated[Path, typer.Option("--output", "-o", help="Output path for the fix script.")] = Path("logblind_fix.ps1"),
-    dry_run: Annotated[bool, typer.Option("--dry-run", help="Generate script in preview-only mode.")] = False,
-    techniques: Annotated[Optional[str], typer.Option("--techniques", "-t", help="Filter ATT&CK IDs (comma-separated).")] = None,
+    file: Annotated[
+        Path | None, typer.Option("--file", "-f", help="Exported audit policy CSV (offline mode).")
+    ] = None,
+    output: Annotated[
+        Path, typer.Option("--output", "-o", help="Output path for the fix script.")
+    ] = Path("logblind_fix.ps1"),
+    dry_run: Annotated[
+        bool, typer.Option("--dry-run", help="Generate script in preview-only mode.")
+    ] = False,
+    techniques: Annotated[
+        str | None, typer.Option("--techniques", "-t", help="Filter ATT&CK IDs (comma-separated).")
+    ] = None,
 ) -> None:
     """Generate PowerShell commands to close audit gaps. Does NOT execute changes.
 
@@ -25,13 +32,13 @@ def fix(
     """
     import platform
 
-    from logblind.collectors.auditpol import AuditPolCollector, AuditPolError
-    from logblind.collectors.registry import RegistryCollector
-    from logblind.collectors.file_import import FileImportCollector, FileImportError
-    from logblind.knowledge_base.loader import KnowledgeBaseLoader
-    from logblind.analyzer.gap_detector import GapDetector
     from logblind.analyzer.coverage_scorer import CoverageScorer
     from logblind.analyzer.fix_generator import FixGenerator
+    from logblind.analyzer.gap_detector import GapDetector
+    from logblind.collectors.auditpol import AuditPolCollector, AuditPolError
+    from logblind.collectors.file_import import FileImportCollector, FileImportError
+    from logblind.collectors.registry import RegistryCollector
+    from logblind.knowledge_base.loader import KnowledgeBaseLoader
 
     print_banner()
 
@@ -43,7 +50,7 @@ def fix(
                 policy_snapshot = FileImportCollector().collect(file)
             except FileImportError as e:
                 print_error(str(e))
-                raise typer.Exit(code=1)
+                raise typer.Exit(code=1) from e
         else:
             if platform.system() != "Windows":
                 print_error(
@@ -58,16 +65,21 @@ def fix(
                 policy_snapshot.merge_registry(registry_snapshot)
             except AuditPolError as e:
                 print_error(str(e))
-                raise typer.Exit(code=1)
+                raise typer.Exit(code=1) from e
 
-    console.print(f"  [green]OK[/green] Collected [bold]{len(policy_snapshot.subcategories)}[/bold] audit subcategories\n")
+    subcategory_count = len(policy_snapshot.subcategories)
+    console.print(
+        f"  [green]OK[/green] Collected [bold]{subcategory_count}[/bold] audit subcategories\n"
+    )
 
     # Step 2: Load knowledge base
     with console.status("[bold green]Loading knowledge base...[/bold green]"):
         kb = KnowledgeBaseLoader().load()
 
     technique_filter = [t.strip() for t in techniques.split(",")] if techniques else None
-    console.print(f"  [green]OK[/green] Loaded [bold]{len(kb.techniques)}[/bold] ATT&CK technique mappings\n")
+    console.print(
+        f"  [green]OK[/green] Loaded [bold]{len(kb.techniques)}[/bold] ATT&CK technique mappings\n"
+    )
 
     # Step 3: Analyze
     with console.status("[bold green]Analyzing detection coverage...[/bold green]"):
@@ -76,7 +88,8 @@ def fix(
 
     # Step 4: Generate fix script
     if not coverage_report.critical_gaps and coverage_report.overall_score >= 80:
-        console.print("[bold green][+] No critical gaps found.[/bold green] Your audit configuration looks solid.")
+        console.print("[bold green][+] No critical gaps found.[/bold green]")
+        console.print("Your audit configuration looks solid.")
         raise typer.Exit(code=0)
 
     generator = FixGenerator()
@@ -92,4 +105,4 @@ def fix(
     console.print(f"  1. Review the script:  [cyan]Get-Content {output}[/cyan]")
     console.print(f"  2. Preview changes:    [cyan].\\{output} -WhatIf[/cyan]")
     console.print(f"  3. Apply fixes:        [cyan].\\{output}[/cyan]  (as Administrator)")
-    console.print(f"  4. Verify:             [cyan]logblind scan[/cyan]")
+    console.print("  4. Verify:             [cyan]logblind scan[/cyan]")

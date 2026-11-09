@@ -7,7 +7,7 @@ from rich.table import Table
 from rich.text import Text
 from rich.tree import Tree
 
-from logblind.models.analysis import CoverageReport, CoverageStatus, TechniqueGapResult
+from logblind.models.analysis import CoverageReport, TechniqueGapResult
 from logblind.utils.console import console
 from logblind.utils.validators import severity_to_int
 
@@ -16,8 +16,11 @@ class CLIReporter:
     """Renders coverage analysis as Rich terminal output."""
 
     def render(
-        self, report: CoverageReport, gap_results: list[TechniqueGapResult],
-        verbose: bool = False, min_severity: str | None = None,
+        self,
+        report: CoverageReport,
+        gap_results: list[TechniqueGapResult],
+        verbose: bool = False,
+        min_severity: str | None = None,
     ) -> None:
         """Render the full analysis to the terminal."""
         self._render_summary(report)
@@ -25,9 +28,7 @@ class CLIReporter:
         self._render_critical_gaps(report, min_severity)
         if verbose:
             self._render_verbose(gap_results)
-        console.print(
-            "\nRun [bold cyan]logblind fix[/bold cyan] to generate a remediation script."
-        )
+        console.print("\nRun [bold cyan]logblind fix[/bold cyan] to generate a remediation script.")
 
     def _render_summary(self, report: CoverageReport) -> None:
         score = report.overall_score
@@ -51,7 +52,9 @@ class CLIReporter:
     def _render_technique_table(self, gap_results: list[TechniqueGapResult]) -> None:
         table = Table(
             title="Lateral Movement Detection Coverage",
-            show_header=True, header_style="bold cyan", border_style="dim",
+            show_header=True,
+            header_style="bold cyan",
+            border_style="dim",
         )
         table.add_column("ATT&CK ID", style="bold", width=12)
         table.add_column("Technique", width=35)
@@ -62,7 +65,8 @@ class CLIReporter:
         for r in gap_results:
             c = r.status.color
             table.add_row(
-                r.technique_id, r.technique_name,
+                r.technique_id,
+                r.technique_name,
                 f"[{c}]{r.coverage_percent:.0f}%[/{c}]",
                 f"{r.status.symbol} [{c}]{r.status.value}[/{c}]",
                 f"[red]{len(r.gaps)}[/red]" if r.gaps else "[green]0[/green]",
@@ -83,7 +87,9 @@ class CLIReporter:
 
         console.print("[bold red][-] CRITICAL GAPS FOUND:[/bold red]\n")
         for gap in gaps:
-            ic = {"CRITICAL": "red bold", "HIGH": "red", "MEDIUM": "yellow"}.get(gap.importance, "dim")
+            ic = {"CRITICAL": "red bold", "HIGH": "red", "MEDIUM": "yellow"}.get(
+                gap.importance, "dim"
+            )
             console.print(f"  [{ic}]> Event ID {gap.event_id}[/{ic}] ({gap.channel})")
             console.print(f"    {gap.condition}")
             console.print(f"    [dim]Reason:[/dim] {gap.reason}")
@@ -101,7 +107,9 @@ class CLIReporter:
             if r.gaps:
                 gb = tree.add("[red]Missing Detections[/red]")
                 for g in r.gaps:
-                    gb.add(f"EID {g.event_id} ({g.channel}): {g.condition}\n  [dim]{g.reason}[/dim]")
+                    gb.add(
+                        f"EID {g.event_id} ({g.channel}): {g.condition}\n  [dim]{g.reason}[/dim]"
+                    )
             if r.notes:
                 nb = tree.add("[cyan]Notes[/cyan]")
                 for n in r.notes:

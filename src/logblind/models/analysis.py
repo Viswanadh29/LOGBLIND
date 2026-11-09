@@ -1,12 +1,14 @@
 """Data models for gap analysis results and coverage reports."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 from enum import Enum
 
 
 class CoverageStatus(Enum):
     """Coverage status for a technique."""
+
     COVERED = "COVERED"
     PARTIAL = "PARTIAL"
     BLIND = "BLIND"
@@ -24,6 +26,7 @@ class CoverageStatus(Enum):
 @dataclass
 class EventGap:
     """A single missing or misconfigured event detection."""
+
     event_id: int
     channel: str
     condition: str
@@ -35,6 +38,7 @@ class EventGap:
 @dataclass
 class TechniqueGapResult:
     """Analysis result for a single ATT&CK technique."""
+
     technique_id: str
     technique_name: str
     coverage_percent: float
@@ -52,6 +56,7 @@ class TechniqueGapResult:
 @dataclass
 class CoverageReport:
     """Overall coverage report across all analyzed techniques."""
+
     overall_score: float
     total_techniques: int
     covered_count: int

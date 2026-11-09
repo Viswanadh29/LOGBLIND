@@ -1,15 +1,17 @@
 """Tests for the logblind fix command and fix generator."""
 
 import re
-from pathlib import Path
 
 import pytest
 from typer.testing import CliRunner
 
-from logblind.cli import app
 from logblind.analyzer.fix_generator import FixGenerator
+from logblind.cli import app
 from logblind.models.analysis import (
-    CoverageReport, CoverageStatus, EventGap, TechniqueGapResult,
+    CoverageReport,
+    CoverageStatus,
+    EventGap,
+    TechniqueGapResult,
 )
 
 runner = CliRunner()
@@ -25,39 +27,53 @@ def sample_report_with_gaps() -> CoverageReport:
     """Create a coverage report with mixed gaps for testing."""
     gaps = [
         EventGap(
-            event_id=4625, channel="Security",
-            condition="Failed logon Type 10", importance="HIGH",
+            event_id=4625,
+            channel="Security",
+            condition="Failed logon Type 10",
+            importance="HIGH",
             reason="Logon not set to Failure",
             fix_command='auditpol /set /subcategory:"Logon" /failure:enable',
         ),
         EventGap(
-            event_id=5140, channel="Security",
-            condition="Network share accessed", importance="CRITICAL",
+            event_id=5140,
+            channel="Security",
+            condition="Network share accessed",
+            importance="CRITICAL",
             reason="File Share not enabled",
             fix_command='auditpol /set /subcategory:"File Share" /success:enable',
         ),
         EventGap(
-            event_id=4104, channel="Microsoft-Windows-PowerShell/Operational",
-            condition="Script block logging", importance="CRITICAL",
+            event_id=4104,
+            channel="Microsoft-Windows-PowerShell/Operational",
+            condition="Script block logging",
+            importance="CRITICAL",
             reason="ScriptBlock Logging not configured",
             fix_command="# Configure: PowerShell ScriptBlock Logging",
         ),
         EventGap(
-            event_id=1, channel="Microsoft-Windows-Sysmon/Operational",
-            condition="Process creation", importance="HIGH",
+            event_id=1,
+            channel="Microsoft-Windows-Sysmon/Operational",
+            condition="Process creation",
+            importance="HIGH",
             reason="Sysmon not installed",
             fix_command="# Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon",
         ),
     ]
     result = TechniqueGapResult(
-        technique_id="T1021.001", technique_name="RDP",
-        coverage_percent=40.0, status=CoverageStatus.PARTIAL,
-        total_requirements=9, met_requirements=5,
+        technique_id="T1021.001",
+        technique_name="RDP",
+        coverage_percent=40.0,
+        status=CoverageStatus.PARTIAL,
+        total_requirements=9,
+        met_requirements=5,
         gaps=gaps,
     )
     return CoverageReport(
-        overall_score=40.0, total_techniques=1,
-        covered_count=0, partial_count=1, blind_count=0,
+        overall_score=40.0,
+        total_techniques=1,
+        covered_count=0,
+        partial_count=1,
+        blind_count=0,
         technique_results=[result],
         critical_gaps=gaps,
     )
@@ -101,9 +117,13 @@ class TestFixGenerator:
 
     def test_no_gaps_report(self):
         report = CoverageReport(
-            overall_score=90.0, total_techniques=1,
-            covered_count=1, partial_count=0, blind_count=0,
-            technique_results=[], critical_gaps=[],
+            overall_score=90.0,
+            total_techniques=1,
+            covered_count=1,
+            partial_count=0,
+            blind_count=0,
+            technique_results=[],
+            critical_gaps=[],
         )
         script = FixGenerator().generate(report)
         # Should still generate a valid script header

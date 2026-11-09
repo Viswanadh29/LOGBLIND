@@ -1,5 +1,7 @@
 """HTML reporter — generates self-contained HTML reports with coverage heatmap."""
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
@@ -23,7 +25,9 @@ class HTMLReporter:
         gaps_html = self._build_gaps_section(report)
         score = report.overall_score
         risk = report.risk_level
-        risk_color = {"LOW RISK": "#22c55e", "MEDIUM RISK": "#eab308", "HIGH RISK": "#ef4444"}.get(risk, "#eab308")
+        risk_color = {"LOW RISK": "#22c55e", "MEDIUM RISK": "#eab308", "HIGH RISK": "#ef4444"}.get(
+            risk, "#eab308"
+        )
 
         return f"""<!DOCTYPE html>
 <html lang="en">
@@ -136,9 +140,9 @@ class HTMLReporter:
             cards.append(
                 f'  <div class="gap-card">'
                 f'<div class="gap-header">Event ID {gap.event_id} ({gap.channel})</div>'
-                f'<div>{gap.condition}</div>'
+                f"<div>{gap.condition}</div>"
                 f'<div class="gap-reason">{gap.reason}</div>'
-                f'{fix_html}'
-                f'</div>'
+                f"{fix_html}"
+                f"</div>"
             )
         return "\n".join(cards)

@@ -1,11 +1,11 @@
 """Root CLI application for LogBlind."""
 
-from typing import Optional
-from typing_extensions import Annotated
+from typing import Annotated
+
 import typer
 
 from logblind import __version__
-from logblind.commands import scan, fix, report, export
+from logblind.commands import export, fix, report, scan
 from logblind.utils.console import console
 
 app = typer.Typer(
@@ -35,8 +35,10 @@ def version_callback(value: bool) -> None:
 @app.callback()
 def main(
     version: Annotated[
-        Optional[bool],
-        typer.Option("--version", "-V", help="Show version.", callback=version_callback, is_eager=True),
+        bool | None,
+        typer.Option(
+            "--version", "-V", help="Show version.", callback=version_callback, is_eager=True
+        ),
     ] = None,
 ) -> None:
     """LogBlind — see what your logs are blind to."""

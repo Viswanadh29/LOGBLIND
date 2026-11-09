@@ -1,7 +1,6 @@
 """Input validation helpers for LogBlind."""
 
 import re
-from typing import Optional
 
 
 def validate_technique_id(technique_id: str) -> bool:
@@ -9,7 +8,7 @@ def validate_technique_id(technique_id: str) -> bool:
     return bool(re.match(r"^T\d{4}(\.\d{3})?$", technique_id))
 
 
-def validate_severity(severity: Optional[str]) -> Optional[str]:
+def validate_severity(severity: str | None) -> str | None:
     """Validate and normalize severity level string."""
     if severity is None:
         return None
