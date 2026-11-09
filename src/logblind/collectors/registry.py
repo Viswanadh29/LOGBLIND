@@ -42,22 +42,30 @@ class RegistryCollector:
             try:
                 result = subprocess.run(
                     ["sc", "query", svc],
-                    capture_output=True, text=True, timeout=10,
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
                 )
                 if result.returncode == 0 and "RUNNING" in result.stdout:
                     return RegistryCheck(
-                        name="Sysmon", path=f"Service: {svc}",
-                        value_name="State", expected_value="RUNNING",
-                        actual_value="RUNNING", is_configured=True,
+                        name="Sysmon",
+                        path=f"Service: {svc}",
+                        value_name="State",
+                        expected_value="RUNNING",
+                        actual_value="RUNNING",
+                        is_configured=True,
                         description=f"Sysmon ({svc}) is installed and running.",
                     )
             except (subprocess.TimeoutExpired, FileNotFoundError):
                 pass
 
         return RegistryCheck(
-            name="Sysmon", path="Service: Sysmon64/Sysmon",
-            value_name="State", expected_value="RUNNING",
-            actual_value=None, is_configured=False,
+            name="Sysmon",
+            path="Service: Sysmon64/Sysmon",
+            value_name="State",
+            expected_value="RUNNING",
+            actual_value=None,
+            is_configured=False,
             description="Sysmon is NOT installed or not running.",
         )
 
@@ -86,33 +94,46 @@ class RegistryCollector:
         try:
             result = subprocess.run(
                 ["sc", "query", "wecsvc"],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             is_running = result.returncode == 0 and "RUNNING" in result.stdout
             return RegistryCheck(
-                name="Windows Event Forwarding", path="Service: wecsvc",
-                value_name="State", expected_value="RUNNING",
+                name="Windows Event Forwarding",
+                path="Service: wecsvc",
+                value_name="State",
+                expected_value="RUNNING",
                 actual_value="RUNNING" if is_running else "STOPPED",
                 is_configured=is_running,
                 description="Windows Event Collector service for centralized log forwarding.",
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return RegistryCheck(
-                name="Windows Event Forwarding", path="Service: wecsvc",
-                value_name="State", expected_value="RUNNING",
-                actual_value=None, is_configured=False,
+                name="Windows Event Forwarding",
+                path="Service: wecsvc",
+                value_name="State",
+                expected_value="RUNNING",
+                actual_value=None,
+                is_configured=False,
                 description="Could not check WEF service status.",
             )
 
     def _read_registry_value(
-        self, name: str, path: str, value_name: str,
-        expected_value: int | str, description: str,
+        self,
+        name: str,
+        path: str,
+        value_name: str,
+        expected_value: int | str,
+        description: str,
     ) -> RegistryCheck:
         """Read a registry value using reg.exe query."""
         try:
             result = subprocess.run(
                 ["reg", "query", path, "/v", value_name],
-                capture_output=True, text=True, timeout=10,
+                capture_output=True,
+                text=True,
+                timeout=10,
             )
             if result.returncode == 0:
                 for line in result.stdout.splitlines():
@@ -123,7 +144,9 @@ class RegistryCollector:
                             if actual.startswith("0x"):
                                 actual_int = int(actual, 16)
                                 return RegistryCheck(
-                                    name=name, path=path, value_name=value_name,
+                                    name=name,
+                                    path=path,
+                                    value_name=value_name,
                                     expected_value=expected_value,
                                     actual_value=actual_int,
                                     is_configured=(actual_int == expected_value),
@@ -133,8 +156,11 @@ class RegistryCollector:
             pass
 
         return RegistryCheck(
-            name=name, path=path, value_name=value_name,
-            expected_value=expected_value, actual_value=None,
+            name=name,
+            path=path,
+            value_name=value_name,
+            expected_value=expected_value,
+            actual_value=None,
             is_configured=False,
             description=f"{name} is not configured. {description}",
         )

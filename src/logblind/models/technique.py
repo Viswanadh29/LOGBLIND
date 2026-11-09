@@ -1,12 +1,14 @@
 """Data models for MITRE ATT&CK techniques and detection requirements."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 
 @dataclass
 class EventRequirement:
     """A Windows Event ID required to detect a technique."""
+
     event_id: int
     channel: str = "Security"
     condition: str = ""
@@ -20,6 +22,7 @@ class EventRequirement:
 @dataclass
 class AdditionalCheck:
     """An additional non-event-log check (registry, Sysmon config, etc.)."""
+
     check_type: str
     description: str
     path: str = ""
@@ -31,6 +34,7 @@ class AdditionalCheck:
 @dataclass
 class Technique:
     """A MITRE ATT&CK technique with all its detection requirements."""
+
     technique_id: str
     name: str
     tactic: str = "Lateral Movement"
@@ -44,6 +48,7 @@ class Technique:
 @dataclass
 class KnowledgeBase:
     """Collection of all loaded ATT&CK technique mappings."""
+
     techniques: list[Technique] = field(default_factory=list)
 
     def get_technique(self, technique_id: str) -> Technique | None:

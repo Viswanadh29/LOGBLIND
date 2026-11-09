@@ -31,7 +31,7 @@ class FileImportCollector:
             except (UnicodeDecodeError, UnicodeError):
                 raw_content = file_path.read_text(encoding="utf-8")
         except Exception as e:
-            raise FileImportError(f"Failed to read file: {e}")
+            raise FileImportError(f"Failed to read file: {e}") from e
 
         if not raw_content.strip():
             raise FileImportError("File is empty.")

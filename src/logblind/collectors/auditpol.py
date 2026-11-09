@@ -35,6 +35,7 @@ class AuditPolCollector:
 
         try:
             import platform
+
             snapshot.machine_name = platform.node()
         except Exception:
             snapshot.machine_name = "unknown"
@@ -53,14 +54,14 @@ class AuditPolCollector:
             )
             return result.stdout
         except FileNotFoundError:
-            raise AuditPolError("auditpol.exe not found. Are you running on Windows?")
+            raise AuditPolError("auditpol.exe not found. Are you running on Windows?") from None
         except subprocess.CalledProcessError as e:
             raise AuditPolError(
                 f"auditpol.exe failed (exit code {e.returncode}). "
                 f"Make sure you're running as Administrator.\nstderr: {e.stderr}"
-            )
+            ) from e
         except subprocess.TimeoutExpired:
-            raise AuditPolError("auditpol.exe timed out after 30 seconds.")
+            raise AuditPolError("auditpol.exe timed out after 30 seconds.") from None
 
     def _parse_csv(self, raw_csv: str) -> dict[str, AuditSubcategory]:
         """Parse auditpol CSV output into AuditSubcategory objects."""

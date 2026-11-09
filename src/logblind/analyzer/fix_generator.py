@@ -1,8 +1,11 @@
 """Fix script generator — generates PowerShell remediation scripts."""
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 from datetime import datetime, timezone
+
 from logblind import __version__
 from logblind.models.analysis import CoverageReport
 
@@ -51,8 +54,8 @@ class FixGenerator:
         ]
 
         seen: set[str] = set()
-        audit_fixes: list[tuple[str, int, str]] = []     # (command, event_id, description)
-        registry_fixes: list[tuple[str, str]] = []        # (description, instruction)
+        audit_fixes: list[tuple[str, int, str]] = []  # (command, event_id, description)
+        registry_fixes: list[tuple[str, str]] = []  # (description, instruction)
         recommendations: list[str] = []
 
         for tr in report.technique_results:
@@ -74,7 +77,9 @@ class FixGenerator:
             lines.append("# Section 1: Audit Policy Changes")
             lines.append("# ----------------------------------------------------------")
             lines.append("")
-            lines.append(f"Write-Host '[1/{self._section_count(audit_fixes, registry_fixes, recommendations)}] Applying audit policy changes...' -ForegroundColor Yellow")
+            lines.append(
+                f"Write-Host '[1/{self._section_count(audit_fixes, registry_fixes, recommendations)}] Applying audit policy changes...' -ForegroundColor Yellow"
+            )
             lines.append("")
 
             for i, (cmd, eid, desc) in enumerate(audit_fixes, 1):
@@ -86,7 +91,9 @@ class FixGenerator:
                     lines.append(f'    Write-Host "  [PREVIEW] {cmd}"')
                     lines.append("} else {")
                     lines.append(f"    {cmd}")
-                    lines.append(f'    Write-Host "  [OK] Applied: Event ID {eid}" -ForegroundColor Green')
+                    lines.append(
+                        f'    Write-Host "  [OK] Applied: Event ID {eid}" -ForegroundColor Green'
+                    )
                     lines.append("}")
                 lines.append("")
 
@@ -99,20 +106,32 @@ class FixGenerator:
 
             section_num = 2 if audit_fixes else 1
             total_sections = self._section_count(audit_fixes, registry_fixes, recommendations)
-            lines.append(f"Write-Host '[{section_num}/{total_sections}] Applying registry fixes...' -ForegroundColor Yellow")
+            lines.append(
+                f"Write-Host '[{section_num}/{total_sections}] Applying registry fixes...' -ForegroundColor Yellow"
+            )
             lines.append("")
 
             for desc, instruction in registry_fixes:
                 lines.append(f"# {desc}")
                 if "ScriptBlock" in instruction or "ScriptBlock" in desc:
-                    reg_path = r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"
+                    reg_path = (
+                        r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging"
+                    )
                     lines.append("if ($WhatIf) {")
-                    lines.append('    Write-Host "  [PREVIEW] Enable PowerShell ScriptBlock Logging"')
+                    lines.append(
+                        '    Write-Host "  [PREVIEW] Enable PowerShell ScriptBlock Logging"'
+                    )
                     lines.append("} else {")
                     lines.append(f'    $regPath = "{reg_path}"')
-                    lines.append("    if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }")
-                    lines.append('    Set-ItemProperty -Path $regPath -Name "EnableScriptBlockLogging" -Value 1 -Type DWord')
-                    lines.append('    Write-Host "  [OK] Enabled ScriptBlock Logging" -ForegroundColor Green')
+                    lines.append(
+                        "    if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }"
+                    )
+                    lines.append(
+                        '    Set-ItemProperty -Path $regPath -Name "EnableScriptBlockLogging" -Value 1 -Type DWord'
+                    )
+                    lines.append(
+                        '    Write-Host "  [OK] Enabled ScriptBlock Logging" -ForegroundColor Green'
+                    )
                     lines.append("}")
                 elif "Module" in instruction or "Module" in desc:
                     reg_path = r"HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging"
@@ -120,19 +139,40 @@ class FixGenerator:
                     lines.append('    Write-Host "  [PREVIEW] Enable PowerShell Module Logging"')
                     lines.append("} else {")
                     lines.append(f'    $regPath = "{reg_path}"')
-                    lines.append("    if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }")
-                    lines.append('    Set-ItemProperty -Path $regPath -Name "EnableModuleLogging" -Value 1 -Type DWord')
-                    lines.append('    Write-Host "  [OK] Enabled Module Logging" -ForegroundColor Green')
+                    lines.append(
+                        "    if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }"
+                    )
+                    lines.append(
+                        '    Set-ItemProperty -Path $regPath -Name "EnableModuleLogging" -Value 1 -Type DWord'
+                    )
+                    lines.append(
+                        '    Write-Host "  [OK] Enabled Module Logging" -ForegroundColor Green'
+                    )
                     lines.append("}")
-                elif "Command" in instruction or "command" in instruction or "Command" in desc or "command" in desc:
-                    reg_path = r"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
+                elif (
+                    "Command" in instruction
+                    or "command" in instruction
+                    or "Command" in desc
+                    or "command" in desc
+                ):
+                    reg_path = (
+                        r"HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit"
+                    )
                     lines.append("if ($WhatIf) {")
-                    lines.append('    Write-Host "  [PREVIEW] Enable command-line auditing in process creation events"')
+                    lines.append(
+                        '    Write-Host "  [PREVIEW] Enable command-line auditing in process creation events"'
+                    )
                     lines.append("} else {")
                     lines.append(f'    $regPath = "{reg_path}"')
-                    lines.append("    if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }")
-                    lines.append('    Set-ItemProperty -Path $regPath -Name "ProcessCreationIncludeCmdLine_Enabled" -Value 1 -Type DWord')
-                    lines.append('    Write-Host "  [OK] Enabled command-line auditing" -ForegroundColor Green')
+                    lines.append(
+                        "    if (-not (Test-Path $regPath)) { New-Item -Path $regPath -Force | Out-Null }"
+                    )
+                    lines.append(
+                        '    Set-ItemProperty -Path $regPath -Name "ProcessCreationIncludeCmdLine_Enabled" -Value 1 -Type DWord'
+                    )
+                    lines.append(
+                        '    Write-Host "  [OK] Enabled command-line auditing" -ForegroundColor Green'
+                    )
                     lines.append("}")
                 else:
                     lines.append(f"# Manual action required: {instruction}")
@@ -153,19 +193,21 @@ class FixGenerator:
             lines.append("")
 
         # --- Summary ---
-        lines.extend([
-            "# ----------------------------------------------------------",
-            "# Done",
-            "# ----------------------------------------------------------",
-            "Write-Host ''",
-            "if ($WhatIf) {",
-            "    Write-Host '[PREVIEW MODE] No changes were made. Remove -WhatIf to apply.' -ForegroundColor Yellow",
-            "} else {",
-            f"    Write-Host '[DONE] Applied {len(audit_fixes)} audit policy fixes and {len(registry_fixes)} registry fixes.' -ForegroundColor Green",
-            "}",
-            "Write-Host 'Re-run: logblind scan -- to verify improvement.' -ForegroundColor Cyan",
-            "",
-        ])
+        lines.extend(
+            [
+                "# ----------------------------------------------------------",
+                "# Done",
+                "# ----------------------------------------------------------",
+                "Write-Host ''",
+                "if ($WhatIf) {",
+                "    Write-Host '[PREVIEW MODE] No changes were made. Remove -WhatIf to apply.' -ForegroundColor Yellow",
+                "} else {",
+                f"    Write-Host '[DONE] Applied {len(audit_fixes)} audit policy fixes and {len(registry_fixes)} registry fixes.' -ForegroundColor Green",
+                "}",
+                "Write-Host 'Re-run: logblind scan -- to verify improvement.' -ForegroundColor Cyan",
+                "",
+            ]
+        )
 
         return "\n".join(lines)
 

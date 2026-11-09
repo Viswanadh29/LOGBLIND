@@ -1,7 +1,9 @@
 """End-to-end tests for the LogBlind CLI."""
 
 import re
+
 from typer.testing import CliRunner
+
 from logblind.cli import app
 
 runner = CliRunner()
