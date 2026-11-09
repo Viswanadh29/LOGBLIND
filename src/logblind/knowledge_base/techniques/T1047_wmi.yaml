@@ -1,0 +1,73 @@
+technique:
+  id: T1047
+  name: "Windows Management Instrumentation (WMI)"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may abuse WMI to execute malicious commands on remote
+    systems via DCOM-based remote execution.
+  real_world_tools:
+    - "wmic.exe (built-in)"
+    - "Invoke-WmiMethod (PowerShell)"
+    - "Invoke-CimMethod (PowerShell)"
+    - "Impacket wmiexec.py"
+    - "SharpWMI"
+
+  detection_requirements:
+    event_ids:
+      - id: 4624
+        channel: "Security"
+        condition: "Logon Type 3 (Network) — WMI remote uses network logon"
+        importance: "CRITICAL"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect WmiPrvSE.exe spawning cmd/powershell"
+        importance: "CRITICAL"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+      - id: 4672
+        channel: "Security"
+        condition: "Special privileges — admin credentials used via WMI"
+        importance: "MEDIUM"
+        audit_subcategory: "Special Logon"
+        audit_setting: "Success"
+
+      - id: 5857
+        channel: "Microsoft-Windows-WMI-Activity/Operational"
+        condition: "WMI provider loaded"
+        importance: "HIGH"
+
+      - id: 5860
+        channel: "Microsoft-Windows-WMI-Activity/Operational"
+        condition: "WMI temporary event registration"
+        importance: "HIGH"
+
+      - id: 5861
+        channel: "Microsoft-Windows-WMI-Activity/Operational"
+        condition: "WMI permanent event registration — persistent backdoor"
+        importance: "CRITICAL"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — WmiPrvSE.exe as parent of suspicious processes"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 3
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Network connection — detect DCOM/RPC (port 135)"
+        importance: "MEDIUM"
+        sysmon_required: true
+
+      - id: 20
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "WMI event consumer created"
+        importance: "HIGH"
+        sysmon_required: true
+
+  references:
+    - "https://attack.mitre.org/techniques/T1047/"
+    - "https://www.jpcert.or.jp/english/pub/sr/DetectLateralMovement_en.pdf"

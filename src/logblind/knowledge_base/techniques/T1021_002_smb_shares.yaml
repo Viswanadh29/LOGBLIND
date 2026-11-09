@@ -1,0 +1,83 @@
+technique:
+  id: T1021.002
+  name: "SMB/Windows Admin Shares"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries use valid credentials with SMB to access admin shares
+    (ADMIN$, C$, IPC$) and tools like PsExec to execute on remote systems.
+  real_world_tools:
+    - "PsExec / PsExec64 (Sysinternals)"
+    - "Impacket smbexec / psexec"
+    - "net use \\\\target\\ADMIN$"
+    - "CrackMapExec (CME)"
+
+  detection_requirements:
+    event_ids:
+      - id: 4624
+        channel: "Security"
+        condition: "Logon Type 3 (Network) — SMB/network-based logon"
+        importance: "CRITICAL"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4648
+        channel: "Security"
+        condition: "Logon using explicit credentials (runas, PsExec -u)"
+        importance: "HIGH"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4672
+        channel: "Security"
+        condition: "Special privileges assigned (admin share access)"
+        importance: "MEDIUM"
+        audit_subcategory: "Special Logon"
+        audit_setting: "Success"
+
+      - id: 5140
+        channel: "Security"
+        condition: "Network share accessed — detect ADMIN$, C$, IPC$ access"
+        importance: "CRITICAL"
+        audit_subcategory: "File Share"
+        audit_setting: "Success"
+
+      - id: 5145
+        channel: "Security"
+        condition: "Detailed file share access — specific files on shares"
+        importance: "HIGH"
+        audit_subcategory: "Detailed File Share"
+        audit_setting: "Success"
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect PSEXESVC.exe or remote cmd.exe"
+        importance: "CRITICAL"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+      - id: 7045
+        channel: "System"
+        condition: "New service installed — PsExec creates PSEXESVC service"
+        importance: "HIGH"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation with full command line and parent process"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 11
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "File creation — detect PSEXESVC.exe dropped to ADMIN$"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 3
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Network connection — detect SMB connections (port 445)"
+        importance: "MEDIUM"
+        sysmon_required: true
+
+  references:
+    - "https://attack.mitre.org/techniques/T1021/002/"
+    - "https://www.jpcert.or.jp/english/pub/sr/DetectLateralMovement_en.pdf"

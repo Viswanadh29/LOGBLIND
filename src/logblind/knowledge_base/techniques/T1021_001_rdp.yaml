@@ -1,0 +1,74 @@
+technique:
+  id: T1021.001
+  name: "Remote Desktop Protocol (RDP)"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may use Valid Accounts to log into a computer using the
+    Remote Desktop Protocol (RDP) for lateral movement.
+  real_world_tools:
+    - "mstsc.exe (built-in Windows RDP client)"
+    - "xfreerdp"
+    - "SharpRDP"
+
+  detection_requirements:
+    event_ids:
+      - id: 4624
+        channel: "Security"
+        condition: "Logon Type 10 (RemoteInteractive) — indicates RDP session"
+        importance: "CRITICAL"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4625
+        channel: "Security"
+        condition: "Failed logon Type 10 — failed RDP attempts"
+        importance: "HIGH"
+        audit_subcategory: "Logon"
+        audit_setting: "Failure"
+
+      - id: 4778
+        channel: "Security"
+        condition: "Session reconnected to a Window Station (RDP reconnect)"
+        importance: "HIGH"
+        audit_subcategory: "Other Logon/Logoff Events"
+        audit_setting: "Success"
+
+      - id: 4779
+        channel: "Security"
+        condition: "Session disconnected from a Window Station"
+        importance: "MEDIUM"
+        audit_subcategory: "Other Logon/Logoff Events"
+        audit_setting: "Success"
+
+      - id: 4672
+        channel: "Security"
+        condition: "Special privileges assigned to new logon (admin RDP)"
+        importance: "MEDIUM"
+        audit_subcategory: "Special Logon"
+        audit_setting: "Success"
+
+      - id: 21
+        channel: "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
+        condition: "RDP session logon succeeded — includes source IP"
+        importance: "CRITICAL"
+
+      - id: 25
+        channel: "Microsoft-Windows-TerminalServices-LocalSessionManager/Operational"
+        condition: "RDP session reconnection succeeded"
+        importance: "MEDIUM"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — detect mstsc.exe or RDP-related processes"
+        importance: "MEDIUM"
+        sysmon_required: true
+
+      - id: 3
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Network connection — detect connections to port 3389"
+        importance: "HIGH"
+        sysmon_required: true
+
+  references:
+    - "https://attack.mitre.org/techniques/T1021/001/"
+    - "https://www.jpcert.or.jp/english/pub/sr/DetectLateralMovement_en.pdf"

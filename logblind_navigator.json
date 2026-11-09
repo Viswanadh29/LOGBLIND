@@ -1,0 +1,149 @@
+{
+  "name": "LogBlind Coverage",
+  "versions": {
+    "attack": "16",
+    "navigator": "4.9.6",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "LogBlind v0.2.0 audit coverage analysis. Overall score: 51% (MEDIUM RISK). Generated: 2026-11-09T12:04:25.717899+00:00",
+  "filters": {
+    "platforms": [
+      "Windows"
+    ]
+  },
+  "sorting": 3,
+  "layout": {
+    "layout": "side",
+    "aggregateFunction": "average",
+    "showID": true,
+    "showName": true,
+    "showAggregateScores": true,
+    "countUnscored": false
+  },
+  "hideDisabled": false,
+  "techniques": [
+    {
+      "techniqueID": "T1021.001",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 44%\nStatus: PARTIAL\nMet: 3/9 requirements\nGaps: 6\n  - EID 4625: Audit subcategory 'Logon' not set to Failure auditing.\n  - EID 4778: Audit subcategory 'Other Logon/Logoff Events' not set to Success auditing.\n  - EID 4779: Audit subcategory 'Other Logon/Logoff Events' not set to Success auditing.\n  - EID 4672: Audit subcategory 'Special Logon' not set to Success auditing.\n  - EID 1: Sysmon is not installed.\n  ... and 1 more",
+      "score": 44,
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1021.002",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 48%\nStatus: PARTIAL\nMet: 4/10 requirements\nGaps: 6\n  - EID 4672: Audit subcategory 'Special Logon' not set to Success auditing.\n  - EID 5140: Audit subcategory 'File Share' not set to Success auditing.\n  - EID 5145: Audit subcategory 'Detailed File Share' not set to Success auditing.\n  - EID 1: Sysmon is not installed.\n  - EID 11: Sysmon is not installed.\n  ... and 1 more",
+      "score": 48,
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1021.003",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 38%\nStatus: PARTIAL\nMet: 2/7 requirements\nGaps: 5\n  - EID 4672: Audit subcategory 'Special Logon' not set to Success auditing.\n  - EID 1: Sysmon is not installed.\n  - EID 3: Sysmon is not installed.\n  - EID 4776: Audit subcategory 'Credential Validation' not set to Success auditing.\n  - EID 10: Sysmon is not installed.",
+      "score": 38,
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1021.006",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 65%\nStatus: PARTIAL\nMet: 5/8 requirements\nGaps: 3\n  - EID 4104: Registry check 'PowerShell ScriptBlock Logging' is not configured.\n  - EID 1: Sysmon is not installed.\n  - EID 3: Sysmon is not installed.",
+      "score": 65,
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1047",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 68%\nStatus: PARTIAL\nMet: 5/9 requirements\nGaps: 4\n  - EID 4672: Audit subcategory 'Special Logon' not set to Success auditing.\n  - EID 1: Sysmon is not installed.\n  - EID 3: Sysmon is not installed.\n  - EID 20: Sysmon is not installed.",
+      "score": 68,
+      "enabled": true,
+      "showSubtechniques": false
+    },
+    {
+      "techniqueID": "T1053.005",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 60%\nStatus: PARTIAL\nMet: 6/10 requirements\nGaps: 4\n  - EID 4698: Audit subcategory 'Other Object Access Events' not set to Success auditing.\n  - EID 4702: Audit subcategory 'Other Object Access Events' not set to Success auditing.\n  - EID 4699: Audit subcategory 'Other Object Access Events' not set to Success auditing.\n  - EID 1: Sysmon is not installed.",
+      "score": 60,
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1059.001",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 65%\nStatus: PARTIAL\nMet: 6/9 requirements\nGaps: 3\n  - EID 1: Sysmon is not installed.\n  - EID 7: Sysmon is not installed.\n  - EID 17: Sysmon is not installed.",
+      "score": 65,
+      "enabled": true,
+      "showSubtechniques": true
+    },
+    {
+      "techniqueID": "T1570",
+      "tactic": "lateral-movement",
+      "color": "#eab308",
+      "comment": "Coverage: 20%\nStatus: PARTIAL\nMet: 2/9 requirements\nGaps: 7\n  - EID 5140: Audit subcategory 'File Share' not set to Success auditing.\n  - EID 5145: Audit subcategory 'Detailed File Share' not set to Success auditing.\n  - EID 4663: Audit subcategory 'File System' not set to Success auditing.\n  - EID 1: Sysmon is not installed.\n  - EID 11: Sysmon is not installed.\n  ... and 2 more",
+      "score": 20,
+      "enabled": true,
+      "showSubtechniques": false
+    }
+  ],
+  "gradient": {
+    "colors": [
+      "#ef4444",
+      "#eab308",
+      "#22c55e"
+    ],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    {
+      "label": "Covered (80-100%)",
+      "color": "#22c55e"
+    },
+    {
+      "label": "Partial (1-79%)",
+      "color": "#eab308"
+    },
+    {
+      "label": "Blind (0%)",
+      "color": "#ef4444"
+    },
+    {
+      "label": "Not assessed",
+      "color": "#ffffff"
+    }
+  ],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#1e293b",
+  "selectTechniquesAcrossTactics": true,
+  "selectSubtechniquesWithParent": false,
+  "selectVisibleTechniques": false,
+  "metadata": [
+    {
+      "name": "tool",
+      "value": "LogBlind v0.2.0"
+    },
+    {
+      "name": "generated",
+      "value": "2026-11-09T12:04:25.717899+00:00"
+    },
+    {
+      "name": "overall_score",
+      "value": "51%"
+    },
+    {
+      "name": "risk_level",
+      "value": "MEDIUM RISK"
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LogBlind Report — 2026-11-09 12:02:42 UTC</title>
+<style>
+  :root {
+    --bg: #0f172a; --surface: #1e293b; --border: #334155;
+    --text: #e2e8f0; --muted: #94a3b8;
+    --green: #22c55e; --yellow: #eab308; --red: #ef4444; --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; padding: 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 1.75rem; margin-bottom: .25rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .score-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 2rem; text-align: center; margin-bottom: 2rem;
+  }
+  .score { font-size: 3.5rem; font-weight: 800; }
+  .risk { font-size: 1.1rem; font-weight: 600; margin-top: .5rem; }
+  .bar-bg { background: #334155; border-radius: 8px; height: 20px; margin: 1rem auto; max-width: 400px; }
+  .bar-fill { height: 100%; border-radius: 8px; transition: width .5s; }
+  .stats { display: flex; justify-content: center; gap: 2rem; margin-top: 1rem; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.5rem; font-weight: 700; }
+  .stat-label { color: var(--muted); font-size: .85rem; }
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 8px; overflow: hidden; margin-bottom: 2rem; }
+  th { background: #0f172a; padding: .75rem 1rem; text-align: left; font-weight: 600; border-bottom: 2px solid var(--border); }
+  td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: rgba(6, 182, 212, 0.05); }
+  .status-covered { color: var(--green); font-weight: 700; }
+  .status-partial { color: var(--yellow); font-weight: 700; }
+  .status-blind { color: var(--red); font-weight: 700; }
+  .gap-card {
+    background: var(--surface); border-left: 4px solid var(--red);
+    padding: 1rem 1.25rem; margin-bottom: .75rem; border-radius: 0 8px 8px 0;
+  }
+  .gap-header { font-weight: 600; margin-bottom: .25rem; }
+  .gap-reason { color: var(--muted); font-size: .9rem; }
+  .gap-fix { font-family: 'Cascadia Code', monospace; background: #0f172a; padding: .4rem .75rem; border-radius: 4px; margin-top: .5rem; font-size: .85rem; color: var(--cyan); display: inline-block; }
+  .section-title { font-size: 1.25rem; font-weight: 700; margin: 2rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: .5rem; }
+  .footer { color: var(--muted); text-align: center; margin-top: 3rem; font-size: .8rem; }
+  a { color: var(--cyan); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>LogBlind Audit Coverage Report</h1>
+  <p class="subtitle">Generated 2026-11-09 12:02:42 UTC &bull; LogBlind v0.2.0</p>
+
+  <div class="score-card">
+    <div class="score" style="color: #eab308">51%</div>
+    <div class="risk" style="color: #eab308">MEDIUM RISK</div>
+    <div class="bar-bg"><div class="bar-fill" style="width: 50.8%; background: #eab308"></div></div>
+    <div class="stats">
+      <div class="stat"><div class="stat-num">8</div><div class="stat-label">Techniques</div></div>
+      <div class="stat"><div class="stat-num status-covered">0</div><div class="stat-label">Covered</div></div>
+      <div class="stat"><div class="stat-num status-partial">8</div><div class="stat-label">Partial</div></div>
+      <div class="stat"><div class="stat-num status-blind">0</div><div class="stat-label">Blind</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">Technique Coverage</div>
+  <table>
+    <thead><tr><th>ATT&amp;CK ID</th><th>Technique</th><th>Coverage</th><th>Status</th><th>Gaps</th></tr></thead>
+    <tbody>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1021/001/'>T1021.001</a></td><td>Remote Desktop Protocol (RDP)</td><td>44%</td><td class='status-partial'>[~] PARTIAL</td><td>6</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1021/002/'>T1021.002</a></td><td>SMB/Windows Admin Shares</td><td>48%</td><td class='status-partial'>[~] PARTIAL</td><td>6</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1021/003/'>T1021.003</a></td><td>Distributed Component Object Model (DCOM)</td><td>38%</td><td class='status-partial'>[~] PARTIAL</td><td>5</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1021/006/'>T1021.006</a></td><td>Windows Remote Management (WinRM)</td><td>65%</td><td class='status-partial'>[~] PARTIAL</td><td>3</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1047/'>T1047</a></td><td>Windows Management Instrumentation (WMI)</td><td>68%</td><td class='status-partial'>[~] PARTIAL</td><td>4</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1053/005/'>T1053.005</a></td><td>Scheduled Task/Job: Scheduled Task</td><td>60%</td><td class='status-partial'>[~] PARTIAL</td><td>4</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1059/001/'>T1059.001</a></td><td>Command and Scripting Interpreter: PowerShell</td><td>65%</td><td class='status-partial'>[~] PARTIAL</td><td>3</td></tr>
+      <tr><td><a href='https://attack.mitre.org/techniques/T1570/'>T1570</a></td><td>Lateral Tool Transfer</td><td>20%</td><td class='status-partial'>[~] PARTIAL</td><td>7</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-title">Critical Gaps (15)</div>
+  <div class="gap-card"><div class="gap-header">Event ID 4625 (Security)</div><div>Failed logon Type 10 — failed RDP attempts</div><div class="gap-reason">Audit subcategory 'Logon' not set to Failure auditing.</div><div class="gap-fix">auditpol /set /subcategory:"Logon" /failure:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 4778 (Security)</div><div>Session reconnected to a Window Station (RDP reconnect)</div><div class="gap-reason">Audit subcategory 'Other Logon/Logoff Events' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"Other Logon/Logoff Events" /success:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 3 (Microsoft-Windows-Sysmon/Operational)</div><div>Network connection — detect connections to port 3389</div><div class="gap-reason">Sysmon is not installed.</div><div class="gap-fix"># Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 5140 (Security)</div><div>Network share accessed — detect ADMIN$, C$, IPC$ access</div><div class="gap-reason">Audit subcategory 'File Share' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"File Share" /success:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 5145 (Security)</div><div>Detailed file share access — specific files on shares</div><div class="gap-reason">Audit subcategory 'Detailed File Share' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"Detailed File Share" /success:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 1 (Microsoft-Windows-Sysmon/Operational)</div><div>Process creation with full command line and parent process</div><div class="gap-reason">Sysmon is not installed.</div><div class="gap-fix"># Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 11 (Microsoft-Windows-Sysmon/Operational)</div><div>File creation — detect PSEXESVC.exe dropped to ADMIN$</div><div class="gap-reason">Sysmon is not installed.</div><div class="gap-fix"># Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 4672 (Security)</div><div>Special privileges assigned — admin privileges for DCOM execution</div><div class="gap-reason">Audit subcategory 'Special Logon' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"Special Logon" /success:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 10 (Microsoft-Windows-Sysmon/Operational)</div><div>Process access — detect DCOM server accessing other processes for injection</div><div class="gap-reason">Sysmon is not installed.</div><div class="gap-fix"># Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 4104 (Microsoft-Windows-PowerShell/Operational)</div><div>Script block logging — captures full remote PowerShell commands</div><div class="gap-reason">Registry check 'PowerShell ScriptBlock Logging' is not configured.</div><div class="gap-fix"># Configure: PowerShell ScriptBlock Logging</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 20 (Microsoft-Windows-Sysmon/Operational)</div><div>WMI event consumer created</div><div class="gap-reason">Sysmon is not installed.</div><div class="gap-fix"># Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 4698 (Security)</div><div>Scheduled task was created — captures task name, action, and creator</div><div class="gap-reason">Audit subcategory 'Other Object Access Events' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"Other Object Access Events" /success:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 4702 (Security)</div><div>Scheduled task was updated — modification of existing tasks</div><div class="gap-reason">Audit subcategory 'Other Object Access Events' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"Other Object Access Events" /success:enable</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 7 (Microsoft-Windows-Sysmon/Operational)</div><div>Image loaded — detect PowerShell CLR DLLs loaded in unusual processes (CLM bypass)</div><div class="gap-reason">Sysmon is not installed.</div><div class="gap-fix"># Install Sysmon: https://learn.microsoft.com/en-us/sysinternals/downloads/sysmon</div></div>
+  <div class="gap-card"><div class="gap-header">Event ID 4663 (Security)</div><div>Object access — file write/create operations on sensitive paths</div><div class="gap-reason">Audit subcategory 'File System' not set to Success auditing.</div><div class="gap-fix">auditpol /set /subcategory:"File System" /success:enable</div></div>
+
+  <div class="footer">
+    <p>LogBlind v0.2.0 &bull; <a href="https://github.com/VISWANADH/logblind">github.com/VISWANADH/logblind</a></p>
+    <p>Report generated from audit policy analysis. Review and apply fixes responsibly.</p>
+  </div>
+</div>
+</body>
+</html>

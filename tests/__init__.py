@@ -1,0 +1,1 @@
+"""LogBlind test suite."""

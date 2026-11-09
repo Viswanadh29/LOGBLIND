@@ -1,0 +1,79 @@
+technique:
+  id: T1059.001
+  name: "Command and Scripting Interpreter: PowerShell"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may abuse PowerShell for remote execution via Invoke-Command,
+    Enter-PSSession, or encoded commands delivered through other lateral movement
+    techniques. PowerShell remoting uses WinRM (WS-Management) as transport.
+  real_world_tools:
+    - "Invoke-Command -ComputerName"
+    - "Enter-PSSession -ComputerName"
+    - "PowerShell Empire"
+    - "Cobalt Strike beacon (PowerShell)"
+    - "PowerSploit"
+
+  detection_requirements:
+    event_ids:
+      - id: 4104
+        channel: "Microsoft-Windows-PowerShell/Operational"
+        condition: "Script block logging — captures full PowerShell script content including obfuscated code"
+        importance: "CRITICAL"
+
+      - id: 4103
+        channel: "Microsoft-Windows-PowerShell/Operational"
+        condition: "Module logging — logs pipeline execution and parameter binding"
+        importance: "HIGH"
+
+      - id: 800
+        channel: "Microsoft-Windows-PowerShell/Operational"
+        condition: "Pipeline execution — details of PowerShell pipeline execution"
+        importance: "MEDIUM"
+
+      - id: 53504
+        channel: "Microsoft-Windows-PowerShell/Operational"
+        condition: "PowerShell named pipe connection — remote PowerShell session indicator"
+        importance: "HIGH"
+
+      - id: 400
+        channel: "Windows PowerShell"
+        condition: "Engine lifecycle — PowerShell engine started (HostApplication shows command)"
+        importance: "MEDIUM"
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect powershell.exe/pwsh.exe with encoded or suspicious arguments"
+        importance: "HIGH"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — PowerShell with parent process context (e.g., spawned by wsmprovhost.exe)"
+        importance: "CRITICAL"
+        sysmon_required: true
+
+      - id: 7
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Image loaded — detect PowerShell CLR DLLs loaded in unusual processes (CLM bypass)"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 17
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Pipe created — detect PowerShell remoting named pipes"
+        importance: "MEDIUM"
+        sysmon_required: true
+
+    additional_checks:
+      - name: "PowerShell ScriptBlock Logging"
+        check_type: "registry"
+        description: "Enable via GPO or registry for comprehensive script capture"
+      - name: "PowerShell Module Logging"
+        check_type: "registry"
+        description: "Enable via GPO for pipeline execution and parameter logging"
+
+  references:
+    - "https://attack.mitre.org/techniques/T1059/001/"
+    - "https://www.mandiant.com/resources/blog/greater-visibility-through-powershell-logging"
+    - "https://www.fireeye.com/blog/threat-research/2016/02/greater_visibilityt.html"

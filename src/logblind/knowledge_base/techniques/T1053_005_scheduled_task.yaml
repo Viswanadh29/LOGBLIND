@@ -1,0 +1,86 @@
+technique:
+  id: T1053.005
+  name: "Scheduled Task/Job: Scheduled Task"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may abuse the Windows Task Scheduler to perform task scheduling
+    for lateral movement by creating scheduled tasks on remote systems via
+    schtasks.exe /S or the ITaskService COM interface.
+  real_world_tools:
+    - "schtasks.exe /create /S <remote>"
+    - "Impacket atexec.py"
+    - "CrackMapExec"
+    - "PowerShell Register-ScheduledTask"
+
+  detection_requirements:
+    event_ids:
+      - id: 4624
+        channel: "Security"
+        condition: "Logon Type 3 (Network) — remote scheduled task creation requires network logon"
+        importance: "CRITICAL"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4698
+        channel: "Security"
+        condition: "Scheduled task was created — captures task name, action, and creator"
+        importance: "CRITICAL"
+        audit_subcategory: "Other Object Access Events"
+        audit_setting: "Success"
+
+      - id: 4702
+        channel: "Security"
+        condition: "Scheduled task was updated — modification of existing tasks"
+        importance: "HIGH"
+        audit_subcategory: "Other Object Access Events"
+        audit_setting: "Success"
+
+      - id: 4699
+        channel: "Security"
+        condition: "Scheduled task was deleted — adversaries may clean up after execution"
+        importance: "MEDIUM"
+        audit_subcategory: "Other Object Access Events"
+        audit_setting: "Success"
+
+      - id: 106
+        channel: "Microsoft-Windows-TaskScheduler/Operational"
+        condition: "Task registered — includes full task XML with action/trigger"
+        importance: "CRITICAL"
+
+      - id: 200
+        channel: "Microsoft-Windows-TaskScheduler/Operational"
+        condition: "Task action started — confirms scheduled task execution"
+        importance: "HIGH"
+
+      - id: 201
+        channel: "Microsoft-Windows-TaskScheduler/Operational"
+        condition: "Task action completed — includes result code"
+        importance: "MEDIUM"
+
+      - id: 141
+        channel: "Microsoft-Windows-TaskScheduler/Operational"
+        condition: "Task removed — cleanup of malicious scheduled tasks"
+        importance: "MEDIUM"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — detect schtasks.exe with /create and /S flags"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect schtasks.exe execution with command-line args"
+        importance: "HIGH"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+    additional_checks:
+      - name: "Command-Line Auditing"
+        check_type: "registry"
+        description: "Include command line in process creation events to capture schtasks arguments"
+
+  references:
+    - "https://attack.mitre.org/techniques/T1053/005/"
+    - "https://www.ired.team/offensive-security/persistence/t1053-schtask"
+    - "https://labs.withsecure.com/publications/scheduled-task-tampering"

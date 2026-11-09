@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling>=1.18.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "logblind"
+version = "0.2.0"
+description = "Windows Log Configuration Auditor for Lateral Movement Blind Spots — maps your audit policy against MITRE ATT&CK techniques to reveal what you can and cannot detect."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "VISWANADH"},
+]
+keywords = [
+    "cybersecurity", "windows", "audit-policy", "lateral-movement",
+    "mitre-attack", "blue-team", "dfir", "soc", "event-logs", "detection",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Typing :: Typed",
+]
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+    "jinja2>=3.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "pre-commit>=3.0",
+]
+
+[project.scripts]
+logblind = "logblind.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/VISWANADH/logblind"
+Repository = "https://github.com/VISWANADH/logblind"
+Issues = "https://github.com/VISWANADH/logblind/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/logblind"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true

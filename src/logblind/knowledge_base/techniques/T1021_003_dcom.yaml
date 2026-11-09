@@ -1,0 +1,70 @@
+technique:
+  id: T1021.003
+  name: "Distributed Component Object Model (DCOM)"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may use DCOM to execute code on remote systems. DCOM leverages
+    the Component Object Model (COM) and abuses objects like MMC20.Application,
+    ShellWindows, ShellBrowserWindow, and Excel/Outlook DDE to execute payloads.
+  real_world_tools:
+    - "Impacket dcomexec.py"
+    - "CrackMapExec"
+    - "PowerShell [Activator]::CreateInstance"
+
+  detection_requirements:
+    event_ids:
+      - id: 4624
+        channel: "Security"
+        condition: "Logon Type 3 (Network) — DCOM lateral movement creates network logons"
+        importance: "CRITICAL"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4672
+        channel: "Security"
+        condition: "Special privileges assigned — admin privileges for DCOM execution"
+        importance: "HIGH"
+        audit_subcategory: "Special Logon"
+        audit_setting: "Success"
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect child processes of DCOM server (mmc.exe, excel.exe spawning cmd/powershell)"
+        importance: "CRITICAL"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — DCOM parent (svchost.exe DcomLaunch) spawning suspicious child processes"
+        importance: "CRITICAL"
+        sysmon_required: true
+
+      - id: 3
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Network connection — detect DCOM/RPC traffic on port 135 and dynamic ports"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 4776
+        channel: "Security"
+        condition: "NTLM authentication — DCOM often authenticates via NTLM"
+        importance: "MEDIUM"
+        audit_subcategory: "Credential Validation"
+        audit_setting: "Success"
+
+      - id: 10
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process access — detect DCOM server accessing other processes for injection"
+        importance: "HIGH"
+        sysmon_required: true
+
+    additional_checks:
+      - name: "Command-Line Auditing"
+        check_type: "registry"
+        description: "Include command line in process creation events to see DCOM payloads"
+
+  references:
+    - "https://attack.mitre.org/techniques/T1021/003/"
+    - "https://enigma0x3.net/2017/01/05/lateral-movement-using-the-mmc20-application-com-object/"
+    - "https://www.cybereason.com/blog/dcom-lateral-movement-techniques"

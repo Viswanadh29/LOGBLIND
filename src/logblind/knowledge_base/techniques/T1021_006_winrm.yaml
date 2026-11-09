@@ -1,0 +1,68 @@
+technique:
+  id: T1021.006
+  name: "Windows Remote Management (WinRM)"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may use WinRM and PowerShell Remoting to execute commands
+    on remote systems over HTTP/HTTPS (ports 5985/5986).
+  real_world_tools:
+    - "winrs.exe (built-in Windows)"
+    - "PowerShell Invoke-Command"
+    - "PowerShell Enter-PSSession"
+    - "Evil-WinRM"
+    - "CrackMapExec (winrm module)"
+
+  detection_requirements:
+    event_ids:
+      - id: 4624
+        channel: "Security"
+        condition: "Logon Type 3 (Network) — WinRM uses network logon"
+        importance: "CRITICAL"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4648
+        channel: "Security"
+        condition: "Explicit credential logon — WinRM with alternate credentials"
+        importance: "HIGH"
+        audit_subcategory: "Logon"
+        audit_setting: "Success"
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect wsmprovhost.exe (WinRM host process)"
+        importance: "CRITICAL"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+      - id: 4104
+        channel: "Microsoft-Windows-PowerShell/Operational"
+        condition: "Script block logging — captures full remote PowerShell commands"
+        importance: "CRITICAL"
+        registry_check: "PowerShell ScriptBlock Logging"
+
+      - id: 91
+        channel: "Microsoft-Windows-WinRM/Operational"
+        condition: "WinRM session created"
+        importance: "HIGH"
+
+      - id: 168
+        channel: "Microsoft-Windows-WinRM/Operational"
+        condition: "WinRM authentication details"
+        importance: "MEDIUM"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — detect wsmprovhost.exe parent-child chains"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 3
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Network connection — detect connections on ports 5985/5986"
+        importance: "MEDIUM"
+        sysmon_required: true
+
+  references:
+    - "https://attack.mitre.org/techniques/T1021/006/"
+    - "https://www.jpcert.or.jp/english/pub/sr/DetectLateralMovement_en.pdf"

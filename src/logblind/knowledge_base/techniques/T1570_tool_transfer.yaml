@@ -1,0 +1,85 @@
+technique:
+  id: T1570
+  name: "Lateral Tool Transfer"
+  tactic: "Lateral Movement"
+  description: >
+    Adversaries may transfer tools or other files between systems in a
+    compromised environment. Files may be copied using SMB, BITS, PowerShell
+    Copy-Item, or native utilities (xcopy, robocopy). This enables staging
+    tools on internal systems that cannot reach external C2.
+  real_world_tools:
+    - "copy \\\\target\\ADMIN$\\payload.exe"
+    - "xcopy / robocopy to admin shares"
+    - "PowerShell Copy-Item -ToSession"
+    - "BITS transfer (bitsadmin)"
+    - "certutil -urlcache (internal)"
+    - "PsExec (drops PSEXESVC.exe)"
+
+  detection_requirements:
+    event_ids:
+      - id: 5140
+        channel: "Security"
+        condition: "Network share was accessed — detect file copy to ADMIN$, C$, IPC$"
+        importance: "CRITICAL"
+        audit_subcategory: "File Share"
+        audit_setting: "Success"
+
+      - id: 5145
+        channel: "Security"
+        condition: "Detailed file share — specific file access on shares (write operations)"
+        importance: "CRITICAL"
+        audit_subcategory: "Detailed File Share"
+        audit_setting: "Success"
+
+      - id: 4663
+        channel: "Security"
+        condition: "Object access — file write/create operations on sensitive paths"
+        importance: "HIGH"
+        audit_subcategory: "File System"
+        audit_setting: "Success"
+
+      - id: 4688
+        channel: "Security"
+        condition: "Process creation — detect xcopy, robocopy, bitsadmin, certutil usage"
+        importance: "HIGH"
+        audit_subcategory: "Process Creation"
+        audit_setting: "Success"
+
+      - id: 1
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Process creation — detect file transfer tools with full command line"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 11
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "File creation — detect new executables dropped in system directories"
+        importance: "CRITICAL"
+        sysmon_required: true
+
+      - id: 15
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "FileCreateStreamHash — detect alternate data streams (ADS) for hidden payloads"
+        importance: "MEDIUM"
+        sysmon_required: true
+
+      - id: 3
+        channel: "Microsoft-Windows-Sysmon/Operational"
+        condition: "Network connection — detect SMB (445) connections for file transfers"
+        importance: "HIGH"
+        sysmon_required: true
+
+      - id: 59
+        channel: "Microsoft-Windows-BITS-Client/Operational"
+        condition: "BITS transfer job — detect background file downloads/uploads"
+        importance: "HIGH"
+
+    additional_checks:
+      - name: "Command-Line Auditing"
+        check_type: "registry"
+        description: "Include command line to see xcopy, robocopy, bitsadmin destination paths"
+
+  references:
+    - "https://attack.mitre.org/techniques/T1570/"
+    - "https://www.ired.team/offensive-security/lateral-movement/t1570-lateral-tool-transfer"
+    - "https://thedfirreport.com/2021/11/29/CONTInued-hands-on-keyboard/"
